@@ -1,1 +1,1 @@
-#Groovy scripts runner plugin for BMC Remedy
+# Groovy scripts runner plugin for BMC Remedy
