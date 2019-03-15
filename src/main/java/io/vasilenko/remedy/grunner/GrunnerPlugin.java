@@ -30,7 +30,7 @@ public class GrunnerPlugin extends ARFilterAPIPlugin {
 
     @Override
     public List<Value> filterAPICall(ARPluginContext context, List<Value> values) throws ARException {
-        log.debug("filterAPICall");
+        log.debug("filterAPICall values: {}", values);
         GrunnerPluginService service = serviceMap.get(values.get(ACTION_VALUE_INDEX));
 
         List<Value> args = new ArrayList<>(values);

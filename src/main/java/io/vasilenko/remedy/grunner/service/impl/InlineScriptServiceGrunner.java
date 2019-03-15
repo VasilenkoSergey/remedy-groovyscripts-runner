@@ -26,7 +26,8 @@ public class InlineScriptServiceGrunner implements GrunnerPluginService {
     public List<Value> run(List<Value> values) throws ARException {
         String script = String.valueOf(values.get(SCRIPT_VALUE));
         log.debug("run inline script: {}", script);
-        shell.evaluate(script);
+        Object result = shell.evaluate(script);
+        log.debug("inline script result: {}", result);
         return new ArrayList<>();
     }
 }
