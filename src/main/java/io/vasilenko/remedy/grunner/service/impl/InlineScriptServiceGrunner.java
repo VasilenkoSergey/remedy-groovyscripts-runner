@@ -2,12 +2,12 @@ package io.vasilenko.remedy.grunner.service.impl;
 
 import com.bmc.arsys.api.ARException;
 import com.bmc.arsys.api.Value;
-import io.vasilenko.remedy.grunner.service.PluginService;
+import io.vasilenko.remedy.grunner.service.GrunnerPluginService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InlineScriptService implements PluginService {
+public class InlineScriptServiceGrunner implements GrunnerPluginService {
 
     @Override
     public List<Value> run(List<Value> values) throws ARException {

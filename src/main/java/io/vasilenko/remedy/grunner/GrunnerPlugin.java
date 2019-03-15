@@ -7,7 +7,7 @@ import com.bmc.arsys.pluginsvr.plugins.ARPluginContext;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import io.vasilenko.remedy.grunner.di.InjectorModule;
-import io.vasilenko.remedy.grunner.service.PluginService;
+import io.vasilenko.remedy.grunner.service.GrunnerPluginService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class GrunnerPlugin extends ARFilterAPIPlugin {
     private static final int ACTION_VALUE_INDEX = 0;
 
     @Inject
-    private Map<Value, PluginService> serviceMap;
+    private Map<Value, GrunnerPluginService> serviceMap;
 
     @Override
     public void initialize(ARPluginContext context) throws ARException {
@@ -31,7 +31,7 @@ public class GrunnerPlugin extends ARFilterAPIPlugin {
     @Override
     public List<Value> filterAPICall(ARPluginContext context, List<Value> values) throws ARException {
         log.debug("filterAPICall");
-        PluginService service = serviceMap.get(values.get(ACTION_VALUE_INDEX));
+        GrunnerPluginService service = serviceMap.get(values.get(ACTION_VALUE_INDEX));
 
         List<Value> args = new ArrayList<>(values);
         args.remove(ACTION_VALUE_INDEX);

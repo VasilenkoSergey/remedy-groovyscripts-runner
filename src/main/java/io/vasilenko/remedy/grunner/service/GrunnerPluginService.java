@@ -5,7 +5,7 @@ import com.bmc.arsys.api.Value;
 
 import java.util.List;
 
-public interface PluginService {
+public interface GrunnerPluginService {
 
     List<Value> run(List<Value> values) throws ARException;
 }

@@ -10,9 +10,9 @@ import com.google.inject.Singleton;
 import com.google.inject.multibindings.MapBinder;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import io.vasilenko.remedy.grunner.service.PluginService;
-import io.vasilenko.remedy.grunner.service.impl.FileScriptService;
-import io.vasilenko.remedy.grunner.service.impl.InlineScriptService;
+import io.vasilenko.remedy.grunner.service.GrunnerPluginService;
+import io.vasilenko.remedy.grunner.service.impl.FileScriptServiceGrunner;
+import io.vasilenko.remedy.grunner.service.impl.InlineScriptServiceGrunner;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -25,12 +25,12 @@ public class InjectorModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        MapBinder<Value, PluginService> grunnerServiceBinder = MapBinder.newMapBinder(binder(), Value.class, PluginService.class);
+        MapBinder<Value, GrunnerPluginService> grunnerServiceBinder = MapBinder.newMapBinder(binder(), Value.class, GrunnerPluginService.class);
         grunnerServiceBinder.addBinding(new Value("FILE"))
-                .to(FileScriptService.class)
+                .to(FileScriptServiceGrunner.class)
                 .in(SINGLETON);
         grunnerServiceBinder.addBinding(new Value("INLINE"))
-                .to(InlineScriptService.class)
+                .to(InlineScriptServiceGrunner.class)
                 .in(SINGLETON);
     }
 
