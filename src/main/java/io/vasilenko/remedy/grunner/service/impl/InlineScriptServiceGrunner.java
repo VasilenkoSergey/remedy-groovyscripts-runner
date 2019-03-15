@@ -1,6 +1,5 @@
 package io.vasilenko.remedy.grunner.service.impl;
 
-import com.bmc.arsys.api.ARException;
 import com.bmc.arsys.api.Value;
 import com.google.inject.Inject;
 import groovy.lang.GroovyShell;
@@ -13,7 +12,7 @@ import java.util.List;
 @Slf4j
 public class InlineScriptServiceGrunner implements GrunnerPluginService {
 
-    private static final int SCRIPT_VALUE = 0;
+    private static final int SCRIPT_TEXT_VALUE = 0;
 
     private final GroovyShell shell;
 
@@ -23,9 +22,9 @@ public class InlineScriptServiceGrunner implements GrunnerPluginService {
     }
 
     @Override
-    public List<Value> run(List<Value> values) throws ARException {
-        String script = String.valueOf(values.get(SCRIPT_VALUE));
-        log.debug("run inline script: {}", script);
+    public List<Value> run(List<Value> values) {
+        String script = String.valueOf(values.get(SCRIPT_TEXT_VALUE));
+        log.debug("inline script run: {}", script);
         Object result = shell.evaluate(script);
         log.debug("inline script result: {}", result);
         return new ArrayList<>();

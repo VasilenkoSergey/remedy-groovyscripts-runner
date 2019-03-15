@@ -1,6 +1,5 @@
 package io.vasilenko.remedy.grunner;
 
-import com.bmc.arsys.api.ARException;
 import com.bmc.arsys.api.Value;
 import com.bmc.arsys.pluginsvr.plugins.ARFilterAPIPlugin;
 import com.bmc.arsys.pluginsvr.plugins.ARPluginContext;
@@ -23,13 +22,13 @@ public class GrunnerPlugin extends ARFilterAPIPlugin {
     private Map<Value, GrunnerPluginService> serviceMap;
 
     @Override
-    public void initialize(ARPluginContext context) throws ARException {
+    public void initialize(ARPluginContext context) {
         Guice.createInjector(new InjectorModule()).injectMembers(this);
         log.debug("GrunnerPlugin initialized");
     }
 
     @Override
-    public List<Value> filterAPICall(ARPluginContext context, List<Value> values) throws ARException {
+    public List<Value> filterAPICall(ARPluginContext context, List<Value> values) {
         log.debug("filterAPICall values: {}", values);
         GrunnerPluginService service = serviceMap.get(values.get(ACTION_VALUE_INDEX));
 

@@ -1,6 +1,5 @@
 package io.vasilenko.remedy.grunner.service.impl;
 
-import com.bmc.arsys.api.ARException;
 import com.bmc.arsys.api.Value;
 import com.google.inject.Inject;
 import groovy.lang.GroovyShell;
@@ -19,7 +18,7 @@ public class FileScriptServiceGrunner implements GrunnerPluginService {
     }
 
     @Override
-    public List<Value> run(List<Value> values) throws ARException {
+    public List<Value> run(List<Value> values) {
         return new ArrayList<>();
     }
 }
