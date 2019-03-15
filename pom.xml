@@ -24,6 +24,7 @@
             <groupId>com.bmc.arsys.pluginsvr</groupId>
             <artifactId>arpluginsvr</artifactId>
             <version>9.1.4</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
