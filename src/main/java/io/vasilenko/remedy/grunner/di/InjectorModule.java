@@ -2,19 +2,37 @@ package io.vasilenko.remedy.grunner.di;
 
 import com.bmc.arsys.api.ARException;
 import com.bmc.arsys.api.ARServerUser;
+import com.bmc.arsys.api.Value;
 import com.bmc.arsys.pluginsvr.ARPluginServerConfiguration;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.multibindings.MapBinder;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import io.vasilenko.remedy.grunner.service.PluginService;
+import io.vasilenko.remedy.grunner.service.impl.FileScriptService;
+import io.vasilenko.remedy.grunner.service.impl.InlineScriptService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
+import static com.google.inject.Scopes.SINGLETON;
+
 @Slf4j
 public class InjectorModule extends AbstractModule {
+
+    @Override
+    protected void configure() {
+        MapBinder<Value, PluginService> grunnerServiceBinder = MapBinder.newMapBinder(binder(), Value.class, PluginService.class);
+        grunnerServiceBinder.addBinding(new Value("FILE"))
+                .to(FileScriptService.class)
+                .in(SINGLETON);
+        grunnerServiceBinder.addBinding(new Value("INLINE"))
+                .to(InlineScriptService.class)
+                .in(SINGLETON);
+    }
 
     @Provides
     @Singleton
@@ -35,7 +53,7 @@ public class InjectorModule extends AbstractModule {
 
     @Provides
     @Singleton
-    ARServerUser provideARServerUser(Configuration configuration) {
+    ARServerUser provideARServerUser() {
         ARServerUser arServerUser = null;
         try {
             arServerUser = ARPluginServerConfiguration.getInstance().getARSvrUsr();
