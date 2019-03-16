@@ -15,38 +15,39 @@
     </properties>
 
     <dependencies>
+        <!-- groovy -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>2.4.8</version>
         </dependency>
-
+        <!-- bmc remedy -->
         <dependency>
             <groupId>com.bmc.arsys.pluginsvr</groupId>
             <artifactId>arpluginsvr</artifactId>
             <version>9.1.4</version>
             <scope>provided</scope>
         </dependency>
-
+        <!-- di -->
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>4.2.2</version>
         </dependency>
-
+        <!-- boilerplate -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.2</version>
             <scope>provided</scope>
         </dependency>
-
+        <!-- log -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.25</version>
         </dependency>
-
+        <!-- test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
