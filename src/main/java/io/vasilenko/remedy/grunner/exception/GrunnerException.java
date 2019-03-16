@@ -23,11 +23,11 @@ import com.bmc.arsys.api.StatusInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PluginException extends ARException {
+public class GrunnerException extends ARException {
 
     private static final int ERROR_MSG_NUMBER = 10000;
 
-    public PluginException(String message) {
+    public GrunnerException(String message) {
         StatusInfo statusInfo = new StatusInfo();
         statusInfo.setMessageType(Constants.AR_RETURN_ERROR);
         statusInfo.setMessageNum((long) ERROR_MSG_NUMBER);
