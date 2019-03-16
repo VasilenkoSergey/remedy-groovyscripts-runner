@@ -58,8 +58,6 @@ public class GrunnerPluginTest {
         inputValues.add(new Value());
 
         plugin.filterAPICall(context, inputValues);
-
-        assertEquals(2, inputValues.size());
     }
 
     @Test
