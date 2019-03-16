@@ -42,8 +42,7 @@ public class GrunnerPluginTest {
     @Mock private GrunnerService service;
     @Mock private Map<Value, GrunnerService> serviceMap;
 
-    @InjectMocks
-    private GrunnerPlugin plugin;
+    @InjectMocks private GrunnerPlugin plugin;
     private List<Value> inputValues;
     private List<Value> outputValues;
     private List<Value> values;

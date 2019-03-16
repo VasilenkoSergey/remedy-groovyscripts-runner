@@ -34,8 +34,7 @@ import static org.mockito.Mockito.*;
 public class InlineScriptServiceTest {
 
     @Mock private GroovyShell shell;
-    @InjectMocks
-    InlineScriptService service;
+    @InjectMocks InlineScriptService service;
     private List<Value> values;
 
     @Before
