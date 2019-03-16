@@ -22,6 +22,7 @@ import com.bmc.arsys.pluginsvr.plugins.ARPluginContext;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import io.vasilenko.remedy.grunner.di.InjectorModule;
+import io.vasilenko.remedy.grunner.exception.GrunnerException;
 import io.vasilenko.remedy.grunner.service.GrunnerService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +33,7 @@ import java.util.Map;
 @Slf4j
 public class GrunnerPlugin extends ARFilterAPIPlugin {
 
+    private static final int VALUES_VALID_SIZE = 2;
     private static final int ACTION_VALUE_INDEX = 0;
 
     @Inject
@@ -44,15 +46,22 @@ public class GrunnerPlugin extends ARFilterAPIPlugin {
     }
 
     @Override
-    public List<Value> filterAPICall(ARPluginContext context, List<Value> values) {
+    public List<Value> filterAPICall(ARPluginContext context, List<Value> values) throws GrunnerException {
+        List<Value> result;
         log.debug("filterAPICall values: {}", values);
-        GrunnerService service = serviceMap.get(values.get(ACTION_VALUE_INDEX));
-
-        List<Value> args = new ArrayList<>(values);
-        args.remove(ACTION_VALUE_INDEX);
-
-        List<Value> result = service.run(args);
+        if (validateValues(values)) {
+            GrunnerService service = serviceMap.get(values.get(ACTION_VALUE_INDEX));
+            List<Value> args = new ArrayList<>(values);
+            args.remove(ACTION_VALUE_INDEX);
+            result = service.run(args);
+        } else {
+            throw new GrunnerException("invalid input arguments");
+        }
         log.debug("result: {}", result);
         return result;
+    }
+
+    private boolean validateValues(List<Value> values) {
+        return values.size() == VALUES_VALID_SIZE;
     }
 }
