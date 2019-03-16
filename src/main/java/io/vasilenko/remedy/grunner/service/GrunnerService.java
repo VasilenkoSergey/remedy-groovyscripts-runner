@@ -20,7 +20,7 @@ import com.bmc.arsys.api.Value;
 
 import java.util.List;
 
-public interface GrunnerPluginService {
+public interface GrunnerService {
 
     List<Value> run(List<Value> values);
 }
