@@ -41,7 +41,8 @@ public class InjectorModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        MapBinder<Value, GrunnerService> grunnerServiceBinder = MapBinder.newMapBinder(binder(), Value.class, GrunnerService.class);
+        MapBinder<Value, GrunnerService> grunnerServiceBinder =
+                MapBinder.newMapBinder(binder(), Value.class, GrunnerService.class);
         grunnerServiceBinder.addBinding(new Value("FILE"))
                 .to(FileScriptService.class)
                 .in(SINGLETON);
