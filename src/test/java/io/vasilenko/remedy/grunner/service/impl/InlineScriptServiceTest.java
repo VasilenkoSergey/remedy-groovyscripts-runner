@@ -28,6 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -49,8 +50,10 @@ public class InlineScriptServiceTest {
 
         when(shell.evaluate(String.valueOf(values.get(0)))).thenReturn("3");
 
-        service.run(values);
+        List<Value> outputValues = service.run(values);
 
         verify(shell, times(1)).evaluate(script);
+        assertEquals(1, outputValues.size());
+        assertEquals(new Value("3"), outputValues.get(0));
     }
 }

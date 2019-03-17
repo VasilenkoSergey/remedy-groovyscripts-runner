@@ -23,6 +23,7 @@ import io.vasilenko.remedy.grunner.service.GrunnerService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -39,10 +40,17 @@ public class InlineScriptService implements GrunnerService {
 
     @Override
     public List<Value> run(List<Value> values) {
+        List<Value> outputValues = new ArrayList<>();
         String script = String.valueOf(values.get(SCRIPT_TEXT_VALUE));
         log.debug("inline script run: {}", script);
         Object result = shell.evaluate(script);
         log.debug("inline script result: {}", result);
-        return new ArrayList<>();
+
+        if (result != null) {
+            outputValues = Collections.singletonList(new Value(String.valueOf(result)));
+            log.debug("outputValues: {}", outputValues);
+            log.debug(result.getClass().getTypeName());
+        }
+        return outputValues;
     }
 }
