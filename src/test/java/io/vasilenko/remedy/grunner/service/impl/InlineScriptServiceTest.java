@@ -44,7 +44,7 @@ public class InlineScriptServiceTest {
     }
 
     @Test
-    public void serviceMustExecuteScript() {
+    public void serviceMustExecuteScriptAndReturnResult() {
         String script = "1 + 2";
         values.add(new Value(script));
 
@@ -55,5 +55,18 @@ public class InlineScriptServiceTest {
         verify(shell, times(1)).evaluate(script);
         assertEquals(1, outputValues.size());
         assertEquals(new Value("3"), outputValues.get(0));
+    }
+
+    @Test
+    public void serviceMustReturnEmptyValuesIfResultIsNull() {
+        String script = "println ars";
+        values.add(new Value(script));
+
+        when(shell.evaluate(String.valueOf(values.get(0)))).thenReturn(null);
+
+        List<Value> outputValues = service.run(values);
+
+        verify(shell, times(1)).evaluate(script);
+        assertEquals(0, outputValues.size());
     }
 }
