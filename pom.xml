@@ -107,6 +107,11 @@
                         <exclude>**/*.xml</exclude>
                         <exclude>**/Application.class</exclude>
                     </excludes>
+                    <archive>
+                        <manifestEntries>
+                            <Class-Path>config/</Class-Path>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
@@ -121,7 +126,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/</outputDirectory>
+                            <outputDirectory>${basedir}/target/config</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
