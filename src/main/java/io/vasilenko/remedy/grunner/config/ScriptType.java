@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package io.vasilenko.remedy.grunner.service;
+package io.vasilenko.remedy.grunner.config;
 
-import com.bmc.arsys.api.Value;
-
-import java.util.List;
-
-public interface GrunnerService {
-
-    List<Value> run(List<Value> values);
+public enum ScriptType {
+    FILE, ENTRY, INLINE
 }

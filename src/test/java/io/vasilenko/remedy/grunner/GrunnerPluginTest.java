@@ -16,77 +16,97 @@
 
 package io.vasilenko.remedy.grunner;
 
+import com.bmc.arsys.api.ARException;
 import com.bmc.arsys.api.Value;
-import com.bmc.arsys.pluginsvr.plugins.ARPluginContext;
-import io.vasilenko.remedy.grunner.exception.GrunnerException;
-import io.vasilenko.remedy.grunner.service.GrunnerService;
+import io.vasilenko.remedy.grunner.config.ScriptType;
+import io.vasilenko.remedy.grunner.service.ScriptRunner;
+import io.vasilenko.remedy.grunner.service.impl.EntryScriptRunner;
+import io.vasilenko.remedy.grunner.service.impl.FileScriptRunner;
+import io.vasilenko.remedy.grunner.service.impl.InlineScriptRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GrunnerPluginTest {
 
-    @Mock private ARPluginContext context;
-    @Mock private GrunnerService service;
-    @Mock private Map<Value, GrunnerService> serviceMap;
-
-    @InjectMocks private GrunnerPlugin plugin;
+    @InjectMocks
+    private GrunnerPlugin plugin;
     private List<Value> inputValues;
-    private List<Value> outputValues;
-    private List<Value> values;
+
+    @Mock
+    private AnnotationConfigApplicationContext applicationContext;
+    @Mock
+    private Map<Value, ScriptRunner> serviceMap;
+    @Mock
+    private FileScriptRunner fileScriptRunner;
+    @Mock
+    private EntryScriptRunner entryScriptRunner;
+    @Mock
+    private InlineScriptRunner inlineScriptRunner;
 
     @Before
     public void setUp() {
         inputValues = new ArrayList<>();
-        outputValues = new ArrayList<>();
+        when(serviceMap.get(new Value(ScriptType.FILE.name()))).thenReturn(fileScriptRunner);
+        when(serviceMap.get(new Value(ScriptType.ENTRY.name()))).thenReturn(entryScriptRunner);
+        when(serviceMap.get(new Value(ScriptType.INLINE.name()))).thenReturn(inlineScriptRunner);
     }
 
-    @Test(expected = GrunnerException.class)
-    public void pluginMustThrowsExceptionWhenInvalidInputValuesSize() throws GrunnerException {
-        inputValues.add(new Value());
-
-        plugin.filterAPICall(context, inputValues);
+    @Test(expected = ARException.class)
+    public void failWhenReceiveInvalidInputValuesSize() throws ARException {
+        plugin.filterAPICall(null, inputValues);
     }
 
-    @Test
-    public void pluginMustCallInlineScriptService() throws GrunnerException {
-        String scriptText = "1 + 2";
-        inputValues.add(new Value("INLINE"));
-        inputValues.add(new Value(scriptText));
-        values = Collections.singletonList(new Value(scriptText));
+    @Test(expected = ARException.class)
+    public void failWhenReceiveInvalidInputScriptTypeValue() throws ARException {
+        inputValues.add(new Value("FILES"));
 
-        when(serviceMap.get(inputValues.get(0))).thenReturn(service);
-        when(service.run(values)).thenReturn(outputValues);
-
-        plugin.filterAPICall(context, inputValues);
-
-        verify(service, times(1)).run(values);
+        plugin.filterAPICall(null, inputValues);
     }
 
     @Test
-    public void pluginMustCallFileScriptService() throws GrunnerException {
-        String scriptName = "Temp.groovy";
+    public void runFileScriptRunnerWhenFirstInputArgumentIsFILE() throws ARException {
         inputValues.add(new Value("FILE"));
-        inputValues.add(new Value(scriptName));
-        values = Collections.singletonList(new Value(scriptName));
 
-        when(serviceMap.get(inputValues.get(0))).thenReturn(service);
-        when(service.run(values)).thenReturn(outputValues);
+        plugin.filterAPICall(null, inputValues);
 
-        plugin.filterAPICall(context, inputValues);
+        verify(fileScriptRunner).run(inputValues);
+    }
 
-        verify(service, times(1)).run(values);
+    @Test
+    public void runEntryScriptRunnerWhenFirstInputArgumentIsENTRY() throws ARException {
+        inputValues.add(new Value("ENTRY"));
+
+        plugin.filterAPICall(null, inputValues);
+
+        verify(entryScriptRunner).run(inputValues);
+    }
+
+    @Test
+    public void runInlineScriptRunnerWhenFirstInputArgumentIsINLINE() throws ARException {
+        inputValues.add(new Value("INLINE"));
+
+        plugin.filterAPICall(null, inputValues);
+
+        verify(inlineScriptRunner).run(inputValues);
+    }
+
+    @Test
+    public void closeContextWhenPluginTerminated() {
+        plugin.terminate(null);
+
+        verify(applicationContext).close();
     }
 }
