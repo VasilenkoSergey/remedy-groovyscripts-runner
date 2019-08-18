@@ -7,7 +7,7 @@ addons:
     organization: "vasilenkosergey-github"
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 before_install:
   - curl -LO https://bitbucket.org/SergeyVasilenko/remedy/downloads/arpluginsvr-9.1.4.pom

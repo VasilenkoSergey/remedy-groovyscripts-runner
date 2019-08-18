@@ -14,27 +14,18 @@
  * limitations under the License.
  */
 
-package io.vasilenko.remedy.grunner.service.impl;
+package io.vasilenko.remedy.grunner.util;
 
-import com.bmc.arsys.api.Value;
-import com.google.inject.Inject;
-import groovy.lang.GroovyShell;
-import io.vasilenko.remedy.grunner.service.GrunnerService;
+import io.vasilenko.remedy.grunner.exception.GrunnerException;
 
-import java.util.ArrayList;
-import java.util.List;
+public final class GrunnerUtil {
 
-public class FileScriptService implements GrunnerService {
-
-    private final GroovyShell shell;
-
-    @Inject
-    public FileScriptService(GroovyShell shell) {
-        this.shell = shell;
+    private GrunnerUtil() {
     }
 
-    @Override
-    public List<Value> run(List<Value> values) {
-        return new ArrayList<>();
+    public static void validateInputValuesSize(int actualSize, int expectedSize) throws GrunnerException {
+        if (actualSize < expectedSize) {
+            throw new GrunnerException("Invalid input values size");
+        }
     }
 }
