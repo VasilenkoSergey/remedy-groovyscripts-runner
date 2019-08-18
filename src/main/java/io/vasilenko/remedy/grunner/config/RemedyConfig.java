@@ -20,6 +20,7 @@ import com.bmc.arsys.api.ARException;
 import com.bmc.arsys.api.ARServerUser;
 import com.bmc.arsys.pluginsvr.ARPluginServerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
@@ -35,6 +36,7 @@ public class RemedyConfig {
     @Value("${grunner.remedy.pwd:}")
     private String pwd;
 
+    @Bean
     @Profile("local")
     public ARServerUser localARServerUser() {
         ARServerUser arServerUser = new ARServerUser();
@@ -45,6 +47,7 @@ public class RemedyConfig {
         return arServerUser;
     }
 
+    @Bean
     @Profile("!local")
     public ARServerUser arServerUser() throws ARException {
         return ARPluginServerConfiguration.getInstance().getARSvrUsr();
