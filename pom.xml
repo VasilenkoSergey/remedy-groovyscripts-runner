@@ -13,7 +13,7 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <sonar.exclusions>**/config/*.*,**/*Application.java</sonar.exclusions>
+        <sonar.exclusions>**/config/*.*,**/Application.class</sonar.exclusions>
     </properties>
 
     <dependencies>
