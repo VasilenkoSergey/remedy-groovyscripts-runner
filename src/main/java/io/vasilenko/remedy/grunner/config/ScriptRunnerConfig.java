@@ -29,7 +29,7 @@ import java.util.Map;
 public class ScriptRunnerConfig {
 
     @Bean(name = "serviceMap")
-    Map<Value, ScriptRunner> serviceMap(
+    public Map<Value, ScriptRunner> serviceMap(
             @Qualifier("fileScriptRunner")ScriptRunner fileScriptRunner,
             @Qualifier("entryScriptRunner")ScriptRunner entryScriptRunner,
             @Qualifier("inlineScriptRunner")ScriptRunner inlineScriptRunner) {

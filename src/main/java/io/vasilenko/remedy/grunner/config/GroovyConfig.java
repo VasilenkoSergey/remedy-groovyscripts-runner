@@ -31,12 +31,12 @@ public class GroovyConfig {
     private String scriptsPath;
 
     @Bean
-    GroovyScriptEngine groovyScriptEngine() throws IOException {
+    public GroovyScriptEngine groovyScriptEngine() throws IOException {
         return new GroovyScriptEngine(scriptsPath);
     }
 
     @Bean
-    GroovyShell groovyShell(GroovyScriptEngine groovyScriptEngine) {
+    public GroovyShell groovyShell(GroovyScriptEngine groovyScriptEngine) {
         return new GroovyShell(groovyScriptEngine.getGroovyClassLoader());
     }
 }
