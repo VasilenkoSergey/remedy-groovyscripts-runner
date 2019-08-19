@@ -36,7 +36,7 @@ public class RemedyConfig {
     @Value("${grunner.remedy.pwd:}")
     private String pwd;
 
-    @Bean
+    @Bean(name = "arServerUser")
     @Profile("local")
     public ARServerUser localARServerUser() {
         ARServerUser arServerUser = new ARServerUser();
@@ -47,7 +47,7 @@ public class RemedyConfig {
         return arServerUser;
     }
 
-    @Bean
+    @Bean(name = "arServerUser")
     @Profile("!local")
     public ARServerUser arServerUser() throws ARException {
         return ARPluginServerConfiguration.getInstance().getARSvrUsr();
