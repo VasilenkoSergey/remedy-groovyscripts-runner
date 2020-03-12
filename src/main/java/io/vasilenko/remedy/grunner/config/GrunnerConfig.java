@@ -16,17 +16,21 @@
 
 package io.vasilenko.remedy.grunner.config;
 
+import groovy.util.GroovyScriptEngine;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+
+import java.io.IOException;
 
 @Configuration
-@PropertySource(value = {"classpath:application.properties", "classpath:application-local.properties"}, ignoreResourceNotFound = true)
-public class PropertiesConfig {
+public class GrunnerConfig {
+
+    @Value("${grunner.scripts.path}")
+    private String scriptsPath;
 
     @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
+    public GroovyScriptEngine groovyScriptEngine() throws IOException {
+        return new GroovyScriptEngine(scriptsPath, getClass().getClassLoader());
     }
 }

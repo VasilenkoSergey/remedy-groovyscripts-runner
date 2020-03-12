@@ -18,20 +18,20 @@ package io.vasilenko.remedy.grunner;
 
 import com.bmc.arsys.api.ARException;
 import com.bmc.arsys.api.Value;
-import io.vasilenko.remedy.grunner.config.ScriptType;
-import io.vasilenko.remedy.grunner.service.ScriptRunner;
-import io.vasilenko.remedy.grunner.service.impl.EntryScriptRunner;
-import io.vasilenko.remedy.grunner.service.impl.FileScriptRunner;
-import io.vasilenko.remedy.grunner.service.impl.InlineScriptRunner;
+import com.bmc.arsys.pluginsvr.plugins.ARPluginContext;
+import io.vasilenko.remedy.grunner.service.ARFilterAPIRunner;
+import io.vasilenko.remedy.grunner.service.impl.EntryARFilterAPIRunner;
+import io.vasilenko.remedy.grunner.service.impl.FileARFilterAPIRunner;
+import io.vasilenko.remedy.grunner.service.impl.InlineARFilterRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,70 +43,84 @@ public class GrunnerPluginTest {
 
     @InjectMocks
     private GrunnerPlugin plugin;
-    private List<Value> inputValues;
+    @Mock
+    private Map<String, ARFilterAPIRunner> serviceMap;
+    @Mock
+    private ARPluginContext arPluginContext;
+    @Mock
+    private FileARFilterAPIRunner fileGroovyARFilterAPIRunner;
+    @Mock
+    private EntryARFilterAPIRunner entryGroovyARFilterAPIRunner;
+    @Mock
+    private InlineARFilterRunner inlineScriptRunner;
 
-    @Mock
-    private AnnotationConfigApplicationContext applicationContext;
-    @Mock
-    private Map<Value, ScriptRunner> serviceMap;
-    @Mock
-    private FileScriptRunner fileScriptRunner;
-    @Mock
-    private EntryScriptRunner entryScriptRunner;
-    @Mock
-    private InlineScriptRunner inlineScriptRunner;
+    private List<Value> inputValues;
 
     @Before
     public void setUp() {
         inputValues = new ArrayList<>();
-        when(serviceMap.get(new Value(ScriptType.FILE.name()))).thenReturn(fileScriptRunner);
-        when(serviceMap.get(new Value(ScriptType.ENTRY.name()))).thenReturn(entryScriptRunner);
-        when(serviceMap.get(new Value(ScriptType.INLINE.name()))).thenReturn(inlineScriptRunner);
+        when(serviceMap.get("file")).thenReturn(fileGroovyARFilterAPIRunner);
+        when(serviceMap.get("entry")).thenReturn(entryGroovyARFilterAPIRunner);
+        when(serviceMap.get("inline")).thenReturn(inlineScriptRunner);
+    }
+
+    @Test(expected = ARException.class)
+    public void failWhenReceiveNullInputValuesSize() throws ARException {
+        plugin.filterAPICall(arPluginContext, null);
     }
 
     @Test(expected = ARException.class)
     public void failWhenReceiveInvalidInputValuesSize() throws ARException {
-        plugin.filterAPICall(null, inputValues);
+        plugin.filterAPICall(arPluginContext, inputValues);
     }
 
     @Test(expected = ARException.class)
-    public void failWhenReceiveInvalidInputScriptTypeValue() throws ARException {
-        inputValues.add(new Value("FILES"));
+    public void failWhenReceiveEmptyInputArgs() throws ARException {
+        inputValues.add(new Value(""));
 
-        plugin.filterAPICall(null, inputValues);
+        plugin.filterAPICall(arPluginContext, inputValues);
+    }
+
+    @Test(expected = ARException.class)
+    public void failWhenReceiveInvalidInputArgs() throws ARException {
+        inputValues.add(new Value("source:"));
+
+        plugin.filterAPICall(arPluginContext, inputValues);
     }
 
     @Test
-    public void runFileScriptRunnerWhenFirstInputArgumentIsFILE() throws ARException {
-        inputValues.add(new Value("FILE"));
+    public void runFileScriptRunnerWhenSourceIsFile() throws ARException {
+        inputValues.add(new Value("source:file,name:Sample.groovy"));
+        Map<String, String> args = new HashMap<>();
+        args.put("source", "file");
+        args.put("name", "Sample.groovy");
 
-        plugin.filterAPICall(null, inputValues);
+        plugin.filterAPICall(arPluginContext, inputValues);
 
-        verify(fileScriptRunner).run(inputValues);
+        verify(fileGroovyARFilterAPIRunner).run(arPluginContext, inputValues, args);
     }
 
     @Test
-    public void runEntryScriptRunnerWhenFirstInputArgumentIsENTRY() throws ARException {
-        inputValues.add(new Value("ENTRY"));
+    public void runEntryScriptRunnerWhenFirstSourceIsEntry() throws ARException {
+        inputValues.add(new Value("source:entry,name:Sample.groovy"));
+        Map<String, String> args = new HashMap<>();
+        args.put("source", "entry");
+        args.put("name", "Sample.groovy");
 
-        plugin.filterAPICall(null, inputValues);
+        plugin.filterAPICall(arPluginContext, inputValues);
 
-        verify(entryScriptRunner).run(inputValues);
+        verify(entryGroovyARFilterAPIRunner).run(arPluginContext, inputValues, args);
     }
 
     @Test
-    public void runInlineScriptRunnerWhenFirstInputArgumentIsINLINE() throws ARException {
-        inputValues.add(new Value("INLINE"));
+    public void runInlineScriptRunnerWhenSourceIsInline() throws ARException {
+        inputValues.add(new Value("source:inline,name:Sample.groovy"));
+        Map<String, String> args = new HashMap<>();
+        args.put("source", "inline");
+        args.put("name", "Sample.groovy");
 
-        plugin.filterAPICall(null, inputValues);
+        plugin.filterAPICall(arPluginContext, inputValues);
 
-        verify(inlineScriptRunner).run(inputValues);
-    }
-
-    @Test
-    public void closeContextWhenPluginTerminated() {
-        plugin.terminate(null);
-
-        verify(applicationContext).close();
+        verify(inlineScriptRunner).run(arPluginContext, inputValues, args);
     }
 }
