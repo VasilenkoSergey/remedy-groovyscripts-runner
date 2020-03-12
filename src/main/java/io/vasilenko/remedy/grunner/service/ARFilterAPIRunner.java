@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package io.vasilenko.remedy.grunner.util;
+package io.vasilenko.remedy.grunner.service;
 
-import com.bmc.arsys.api.ARException;
+import com.bmc.arsys.api.Value;
+import com.bmc.arsys.pluginsvr.plugins.ARPluginContext;
 import io.vasilenko.remedy.grunner.exception.GrunnerException;
-import org.junit.Test;
 
-import static io.vasilenko.remedy.grunner.util.GrunnerUtil.validateArg;
+import java.util.List;
+import java.util.Map;
 
-public class GrunnerUtilTest {
+public interface ARFilterAPIRunner {
 
-    @Test(expected = ARException.class)
-    public void failIfArgIsNull() throws GrunnerException {
-        validateArg(null, "source");
-    }
+    List<Value> run(ARPluginContext arPluginContext, List<Value> values, Map<String, String> args) throws GrunnerException;
 }

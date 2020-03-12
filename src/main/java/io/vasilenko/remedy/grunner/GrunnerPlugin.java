@@ -20,76 +20,77 @@ import com.bmc.arsys.api.ARException;
 import com.bmc.arsys.api.Value;
 import com.bmc.arsys.pluginsvr.plugins.ARFilterAPIPlugin;
 import com.bmc.arsys.pluginsvr.plugins.ARPluginContext;
-import com.bmc.thirdparty.org.slf4j.Logger;
-import com.bmc.thirdparty.org.slf4j.LoggerFactory;
-import io.vasilenko.remedy.grunner.config.ScriptType;
 import io.vasilenko.remedy.grunner.exception.GrunnerException;
-import io.vasilenko.remedy.grunner.service.ScriptRunner;
+import io.vasilenko.remedy.grunner.service.ARFilterAPIRunner;
+import io.vasilenko.remedy.grunner.util.GrunnerUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.vasilenko.remedy.grunner.util.GrunnerUtil.validateInputValuesSize;
-
+@Slf4j
 @Configuration
 @ComponentScan
 public class GrunnerPlugin extends ARFilterAPIPlugin {
 
-    private static final int EXPECTED_INPUT_VALUES_SIZE = 1;
-    private static final int SCRIPT_SOURCE_INPUT_INDEX = 0;
+    private static final int ARGS_INDEX = 0;
+    private static final int MIN_INPUT_VALUES = 1;
 
-    private final Logger log = LoggerFactory.getLogger(GrunnerPlugin.class);
-
-    private AnnotationConfigApplicationContext applicationContext;
-    private Map<Value, ScriptRunner> serviceMap;
-
-    @Resource(name = "serviceMap")
-    public void setServiceMap(Map<Value, ScriptRunner> serviceMap) {
-        this.serviceMap = serviceMap;
-    }
+    @Autowired
+    private Map<String, ARFilterAPIRunner> serviceMap;
 
     @Override
     public void initialize(ARPluginContext context) {
-        applicationContext = new AnnotationConfigApplicationContext(GrunnerPlugin.class);
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(GrunnerPlugin.class);
         applicationContext.getAutowireCapableBeanFactory().autowireBean(this);
-        log.debug("GrunnerPlugin initialized");
+        log.info("Grunner Plugin initialized");
     }
 
     @Override
-    public List<Value> filterAPICall(ARPluginContext context, List<Value> inputValues) throws ARException {
-        log.debug("input values: {}", inputValues);
-        validateInputValues(inputValues);
-        Value scriptSourceValue = inputValues.get(SCRIPT_SOURCE_INPUT_INDEX);
-        inputValues.remove(SCRIPT_SOURCE_INPUT_INDEX);
-        ScriptRunner scriptRunner = serviceMap.get(scriptSourceValue);
-        List<Value> result = scriptRunner.run(inputValues);
-        log.debug("result: {}", result);
-        return result;
+    public List<Value> filterAPICall(ARPluginContext context, List<Value> values) throws ARException {
+        log.info("user: {}", context.getUser());
+        log.debug("values: {}", values);
+        validateValues(values);
+        Map<String, String> args = getArgsMap(String.valueOf(values.get(ARGS_INDEX)));
+        String source = args.get("source");
+        GrunnerUtil.validateArg(source, "source");
+        ARFilterAPIRunner runner = serviceMap.get(source);
+        values.remove(ARGS_INDEX);
+        List<Value> out = runner.run(context, values, args);
+        log.debug("out: {}", out);
+        return out;
     }
 
-    @Override
-    public void terminate(ARPluginContext context) {
-        applicationContext.close();
-    }
-
-    private void validateInputValues(List<Value> inputValues) throws GrunnerException {
-        validateInputValuesSize(inputValues.size(), EXPECTED_INPUT_VALUES_SIZE);
-        String scriptTypeValue = String.valueOf(inputValues.get(SCRIPT_SOURCE_INPUT_INDEX));
-        validateScriptType(scriptTypeValue);
-    }
-
-    private void validateScriptType(String scriptTypeValue) throws GrunnerException {
-        if (!checkExistingScriptType(scriptTypeValue)) {
-            throw new GrunnerException("Invalid input script type value");
+    private void validateValues(List<Value> values) throws GrunnerException {
+        if (values != null && values.size() >= MIN_INPUT_VALUES) {
+            validateArgs(String.valueOf(values.get(ARGS_INDEX)));
+        } else {
+            throw new GrunnerException("invalid values");
         }
     }
 
-    public boolean checkExistingScriptType(String scriptTypeValue) {
-        return Arrays.stream(ScriptType.values()).anyMatch(scriptType -> scriptType.name().equals(scriptTypeValue));
+    private void validateArgs(String args) throws GrunnerException {
+        if (args.isEmpty()) {
+            throw new GrunnerException("invalid values");
+        }
+    }
+
+    private Map<String, String> getArgsMap(String str) throws GrunnerException {
+        Map<String, String> map = new HashMap<>();
+        String[] pairs = str.split(",");
+        for (String pair : pairs) {
+            String[] keyValue = pair.split(":");
+            if (keyValue.length < 2) {
+                throw new GrunnerException("invalid args");
+            }
+            map.put(keyValue[0].toLowerCase(), keyValue[1]);
+        }
+        return map;
     }
 }

@@ -23,9 +23,9 @@ public final class GrunnerUtil {
     private GrunnerUtil() {
     }
 
-    public static void validateInputValuesSize(int actualSize, int expectedSize) throws GrunnerException {
-        if (actualSize < expectedSize) {
-            throw new GrunnerException("Invalid input values size");
+    public static void validateArg(String arg, String key) throws GrunnerException {
+        if (arg == null) {
+            throw new GrunnerException("arg " + key + " is empty");
         }
     }
 }

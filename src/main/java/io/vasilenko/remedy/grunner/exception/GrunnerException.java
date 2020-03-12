@@ -30,7 +30,7 @@ public class GrunnerException extends ARException {
     public GrunnerException(String message) {
         StatusInfo statusInfo = new StatusInfo();
         statusInfo.setMessageType(Constants.AR_RETURN_ERROR);
-        statusInfo.setMessageNum((long) ERROR_MSG_NUMBER);
+        statusInfo.setMessageNum(ERROR_MSG_NUMBER);
         statusInfo.setMessageText(message);
         List<StatusInfo> statusInfoList = new ArrayList<>();
         statusInfoList.add(statusInfo);
