@@ -6,8 +6,7 @@ addons:
   sonarcloud:
     organization: "vasilenkosergey-github"
 
-jdk:
-  - openjdk8
+jdk: openjdk8
 
 before_install:
   - curl -LO https://bitbucket.org/SergeyVasilenko/remedy/downloads/arpluginsvr-9.1.4.pom
@@ -15,9 +14,16 @@ before_install:
   - mvn install:install-file  -Dfile=arpluginsvr-9.1.4.jar -DpomFile=arpluginsvr-9.1.4.pom
 
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+  - mvn clean package sonar:sonar
 
 cache:
   directories:
     - '$HOME/.m2/repository'
     - '$HOME/.sonar/cache'
+
+notifications:
+  email:
+    recipients:
+      - sergey@vasilenko.io
+    on_success: always
+    on_failure: always
