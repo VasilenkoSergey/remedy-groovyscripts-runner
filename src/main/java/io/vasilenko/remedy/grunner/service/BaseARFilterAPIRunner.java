@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package io.vasilenko.remedy.grunner.util;
+package io.vasilenko.remedy.grunner.service;
 
-import com.bmc.arsys.api.ARException;
-import io.vasilenko.remedy.grunner.exception.GrunnerException;
-import org.junit.Test;
+import com.bmc.arsys.api.ARServerUser;
+import io.vasilenko.remedy.grunner.script.GrunnerARPluginContext;
 
-import static io.vasilenko.remedy.grunner.util.GrunnerUtil.validateArg;
+public abstract class BaseARFilterAPIRunner implements ARFilterAPIRunner {
 
-public class GrunnerUtilTest {
-
-    @Test(expected = ARException.class)
-    public void failIfArgIsNull() throws GrunnerException {
-        validateArg(null, "source");
+    protected GrunnerARPluginContext getBinding(ARServerUser arServerUser) {
+        return new GrunnerARPluginContext(arServerUser);
     }
 }
