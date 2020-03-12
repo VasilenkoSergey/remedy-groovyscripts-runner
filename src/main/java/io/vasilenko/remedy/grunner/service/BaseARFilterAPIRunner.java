@@ -17,13 +17,7 @@
 package io.vasilenko.remedy.grunner.service;
 
 import com.bmc.arsys.api.ARServerUser;
-import com.bmc.arsys.api.Value;
-import com.bmc.arsys.pluginsvr.plugins.ARPluginContext;
-import groovy.lang.Script;
 import io.vasilenko.remedy.grunner.script.GrunnerARPluginContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class BaseARFilterAPIRunner implements ARFilterAPIRunner {
 

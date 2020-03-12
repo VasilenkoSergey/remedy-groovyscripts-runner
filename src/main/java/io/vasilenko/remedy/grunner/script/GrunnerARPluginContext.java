@@ -17,7 +17,6 @@
 package io.vasilenko.remedy.grunner.script;
 
 import com.bmc.arsys.api.ARServerUser;
-import com.bmc.arsys.pluginsvr.plugins.ARPluginContext;
 import groovy.lang.Binding;
 
 public class GrunnerARPluginContext extends Binding {
